@@ -5,7 +5,6 @@ import { UserModel } from "../models/user.model.js";
 export async function register(req, res, next) {
   try {
     const { _id, email } = await UserModel.create(req.body);
-
     const data = { uid: _id, email };
 
     res.status(201).json({

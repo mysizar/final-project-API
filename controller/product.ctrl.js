@@ -1,6 +1,8 @@
 import errorCreator from "../lib/errorCreator.js";
 import { ProductModel } from "../models/product.model.js";
 
+/*------------------- get ------------------*/
+
 export async function getAll(req, res, next) {
   const limit = +req.params.limit || 0;
   const page = +req.params.page || 1;
@@ -38,6 +40,31 @@ export async function getByCtg(req, res, next) {
     res.status(200).json({
       code: 200,
       message: `Products in category '${category}' successfully selected`,
+      products,
+    });
+  } catch (err) {
+    console.log(err);
+    next(errorCreator("Bad request", 400));
+  }
+}
+
+export async function getByOwner(req, res, next) {
+  const limit = +req.params.limit || 0;
+  const page = +req.params.page || 1;
+  const skip = (page - 1) * limit;
+  const id = req.params.id;
+
+  try {
+    const products = await ProductModel.find({ owner: id })
+      .limit(limit)
+      .skip(skip);
+
+    if (products.length === 0)
+      return next(errorCreator(`No products found for user <${id}>`, 400));
+
+    res.status(200).json({
+      code: 200,
+      message: `Products for user '${id}' successfully selected`,
       products,
     });
   } catch (err) {
@@ -84,5 +111,86 @@ export async function getById(req, res, next) {
   } catch (err) {
     console.log(err);
     next(errorCreator("Bad request", 400));
+  }
+}
+
+/*------------------- post ------------------*/
+
+export async function create(req, res, next) {
+  const csrf = req.body.secure.newCSRF;
+  delete req.body.secure;
+
+  try {
+    const doc = await ProductModel.create(req.body);
+
+    res
+      .status(201)
+      .cookie("csrf", csrf, {
+        httpOnly: true,
+        secure: false,
+      })
+      .json({
+        code: 201,
+        message: "Product successful created",
+        doc,
+      });
+  } catch (err) {
+    console.log("create product --> controller error -->", err.message);
+    next(errorCreator("Database error", 500));
+  }
+}
+
+export async function updateProduct(req, res, next) {
+  const csrf = req.body.secure.newCSRF;
+  delete req.body.secure;
+
+  try {
+    const doc = await ProductModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!doc) return next(errorCreator("Product not found", 400));
+
+    res
+      .status(200)
+      .cookie("csrf", csrf, {
+        httpOnly: true,
+        secure: false,
+      })
+      .json({
+        code: 200,
+        message: "Product successful updated",
+        doc,
+      });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      next(errorCreator(err.message, 400));
+    } else {
+      console.log("update product --> controller error -->", err.message);
+      next(errorCreator("Database error", 500));
+    }
+  }
+}
+
+export async function deleteProduct(req, res, next) {
+  const csrf = req.body.secure.newCSRF;
+  delete req.body.secure;
+
+  try {
+    const doc = await ProductModel.findByIdAndDelete(req.params.id);
+    if (!doc) return next(errorCreator("Product not found", 400));
+
+    res.status(204).cookie("csrf", csrf, {
+      httpOnly: true,
+      secure: false,
+    });
+    // .json({
+    //   code: 204,
+    //   message: "Product successful deleted",
+    //   doc,
+    // });
+  } catch (err) {
+    console.log("delete product --> controller error -->", err.message);
+    next(errorCreator("Database error", 500));
   }
 }
