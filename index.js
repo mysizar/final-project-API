@@ -6,6 +6,7 @@ import cors from "cors";
 import { userRouter } from "./routes/user.route.js";
 import { mongoConnect, mongoListener } from "./config/db.connect.js";
 import { productRouter } from "./routes/product.route.js";
+import { check } from "express-validator";
 
 mongoListener();
 await mongoConnect();
@@ -20,9 +21,9 @@ app.use(
   })
 );
 
-// Endpoints
-app.use("/user", userRouter);
-app.use("/product", productRouter);
+// Endpoints with sanitizing
+app.use("/user", check("**").trim().escape(), userRouter);
+app.use("/product", check("**").trim().escape(), productRouter);
 
 // 404-Page
 app.all("*", (req, res, next) => {

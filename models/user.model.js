@@ -1,27 +1,62 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+const UserSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    jwt: String,
+    csrf: String,
+    activated: {
+      type: Boolean,
+      default: false,
+    },
+    about: {
+      username: {
+        type: String,
+        required: true,
+      },
+      location: {
+        zip: {
+          type: String,
+          minLength: 4,
+          maxLength: 5,
+          required: true,
+        },
+        city: {
+          type: String,
+          required: true,
+        },
+        street: String,
+        house: {
+          type: String,
+          minLength: 1,
+        },
+      },
+      gender: {
+        type: String,
+        enum: {
+          values: ["male", "female", "other"],
+          message: "Gender '{VALUE}' is not supported by the database",
+        },
+      },
+      rate: {
+        average: Number,
+        votes: Number,
+      },
+      tel: String,
+      birthday: Date,
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  jwt: String,
-  csrf: String,
-  activated: {
-    type: Boolean,
-    default: false,
-  },
-  username: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
 // Hook - hashed password before saving to the database
 UserSchema.pre("save", async function (next) {
@@ -37,17 +72,3 @@ UserSchema.methods.auth = async function (plainPassword) {
 };
 
 export const UserModel = model("user", UserSchema);
-
-/*
-plz ort
----email
----password
----nutzername
----- optional -----
-straße, nr
-tel
-man oder frau
-optional geburtsdatum
-createdAt
-
-*/

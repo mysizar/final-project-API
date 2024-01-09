@@ -3,10 +3,8 @@ import { verifyJwt } from "../lib/jwt.js";
 import { UserModel } from "../models/user.model.js";
 
 export async function register(req, res, next) {
-  const { email, password } = req.body;
-
   try {
-    const { _id } = await UserModel.create({ email, password });
+    const { _id, email } = await UserModel.create(req.body);
 
     const data = { uid: _id, email };
 
@@ -18,8 +16,10 @@ export async function register(req, res, next) {
   } catch (err) {
     if (err.code === 11000) {
       next(errorCreator("User already exists", 401));
+    } else if (err.name === "ValidationError") {
+      next(errorCreator(err.message, 401));
     } else {
-      console.log("create user -> DB error:", err.message);
+      console.log("create user DB error -->", err);
       next(errorCreator("Database error", 500));
     }
   }
