@@ -10,7 +10,7 @@ import {
   updateProduct,
 } from "../controller/product.ctrl.js";
 import checkFilter from "../middlewares/product/checkFilter.mdw.js";
-import refreshCSRF from "../middlewares/user/checkCSRF.mdw.js";
+import refreshCSRF from "../middlewares/user/refreshCSRF.mdw.js";
 
 export const productRouter = Router();
 
