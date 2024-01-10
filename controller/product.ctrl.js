@@ -1,3 +1,4 @@
+import buildPaths from "../lib/buildPaths.js";
 import errorCreator from "../lib/errorCreator.js";
 import { ProductModel } from "../models/product.model.js";
 
@@ -13,7 +14,7 @@ export async function getAll(req, res, next) {
 
     res.status(200).json({
       code: 200,
-      message: "Products successfully selected",
+      message: "Items successfully selected",
       products,
     });
   } catch (err) {
@@ -39,7 +40,7 @@ export async function getByCtg(req, res, next) {
 
     res.status(200).json({
       code: 200,
-      message: `Products in category '${category}' successfully selected`,
+      message: `Items in category '${category}' successfully selected`,
       products,
     });
   } catch (err) {
@@ -60,11 +61,11 @@ export async function getByOwner(req, res, next) {
       .skip(skip);
 
     if (products.length === 0)
-      return next(errorCreator(`No products found for user <${id}>`, 400));
+      return next(errorCreator(`No items found for user <${id}>`, 400));
 
     res.status(200).json({
       code: 200,
-      message: `Products for user '${id}' successfully selected`,
+      message: `Items for user '${id}' successfully selected`,
       products,
     });
   } catch (err) {
@@ -90,7 +91,7 @@ export async function getByName(req, res, next) {
 
     res.status(200).json({
       code: 200,
-      message: `Products with title '${title}' successfully selected`,
+      message: `Items with title '${title}' successfully selected`,
       products,
     });
   } catch (err) {
@@ -105,7 +106,7 @@ export async function getById(req, res, next) {
 
     res.status(200).json({
       code: 200,
-      message: "Product successfully selected",
+      message: "Item successfully selected",
       product,
     });
   } catch (err) {
@@ -132,7 +133,7 @@ export async function create(req, res, next) {
 
     res.status(201).json({
       code: 201,
-      message: "Product successful created",
+      message: "Item successfully created",
       doc,
     });
   } catch (err) {
@@ -155,21 +156,28 @@ export async function updateProduct(req, res, next) {
     secure: false,
   });
 
+  // loop through the object and create paths to update nested objects
+  const update = buildPaths(req.body);
+
   try {
     const result = await ProductModel.findById(req.params.id);
-    if (!result) return next(errorCreator("Product not found", 400));
+    if (!result) return next(errorCreator("Item not found", 400));
 
     if (uid !== result.owner.toString())
       return next(errorCreator("You cannot update another user's item!", 401));
 
-    const doc = await ProductModel.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const doc = await ProductModel.findByIdAndUpdate(
+      req.params.id,
+      { $set: update } /*req.body*/,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     res.status(200).json({
       code: 200,
-      message: "Product successful updated",
+      message: "Item successfully updated",
       doc,
     });
   } catch (err) {
@@ -194,7 +202,7 @@ export async function deleteProduct(req, res, next) {
 
   try {
     const result = await ProductModel.findById(req.params.id);
-    if (!result) return next(errorCreator("Product not found", 400));
+    if (!result) return next(errorCreator("Item not found", 400));
 
     if (uid !== result.owner.toString())
       return next(errorCreator("You cannot delete another user's item!", 401));

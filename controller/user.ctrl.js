@@ -1,6 +1,9 @@
+import buildPaths from "../lib/buildPaths.js";
 import errorCreator from "../lib/errorCreator.js";
 import { verifyJwt } from "../lib/jwt.js";
 import { UserModel } from "../models/user.model.js";
+
+/* ------------------------- post ------------------------- */
 
 export async function register(req, res, next) {
   try {
@@ -9,7 +12,7 @@ export async function register(req, res, next) {
 
     res.status(201).json({
       code: 201,
-      message: "User successful created",
+      message: "User successfully created. Please confirm email!",
       data,
     });
   } catch (err) {
@@ -41,7 +44,7 @@ export function login(req, res, next) {
     })
     .json({
       code: 200,
-      message: "User successful logged in",
+      message: "User successfully logged in",
       uid,
     });
 }
@@ -79,6 +82,70 @@ export async function logout(req, res, next) {
     })
     .json({
       code: 200,
-      message: "User successful logged out",
+      message: "User successfully logged out",
     });
+}
+
+/* ------------------------- get ------------------------- */
+
+export async function getAbout(req, res, next) {
+  const decodeJWT = verifyJwt(req.cookies.jwt);
+
+  try {
+    const doc = await UserModel.findById(req.params.id).select(
+      /* information about yourself or someone else? */
+      decodeJWT.id === req.params.id
+        ? "email info createdAt"
+        : "createdAt info.about.username info.rating"
+    );
+    if (!doc) return next(errorCreator("User not found", 400));
+
+    res.status(200).json({
+      code: 200,
+      message: "User info successfully selected",
+      doc,
+    });
+  } catch (err) {
+    console.log("get user/about --> controller error -->", err.message);
+    next(errorCreator("Database error", 500));
+  }
+}
+
+/* ------------------------- put ------------------------- */
+
+export async function updateAbout(req, res, next) {
+  const { csrf, uid } = req.body.secure;
+  delete req.body.secure;
+  res.cookie("csrf", csrf, {
+    httpOnly: true,
+    secure: false,
+  });
+
+  // loop through the object and create paths to update nested objects
+  const update = buildPaths(req.body.about, "info.about");
+
+  try {
+    const doc = await UserModel.findByIdAndUpdate(
+      uid,
+      { $set: update },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("info updatedAt");
+    if (!doc) return next(errorCreator("User not found", 400));
+
+    res.status(200).json({
+      code: 200,
+      message: "User successfully updated",
+      doc,
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      next(errorCreator(err.message, 400));
+    } else {
+      console.log("update user/about --> controller error -->", err.message);
+      next(errorCreator("Database error", 500));
+    }
+  }
 }

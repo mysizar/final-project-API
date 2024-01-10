@@ -18,44 +18,46 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    about: {
-      username: {
-        type: String,
-        required: true,
-      },
-      location: {
-        zip: {
-          type: String,
-          minLength: 4,
-          maxLength: 5,
-          required: true,
-        },
-        city: {
+    info: {
+      about: {
+        username: {
           type: String,
           required: true,
         },
-        street: String,
-        house: {
+        location: {
+          zip: {
+            type: String,
+            minLength: 4,
+            maxLength: 5,
+            required: true,
+          },
+          city: {
+            type: String,
+            required: true,
+          },
+          street: String,
+          house: {
+            type: String,
+            minLength: 1,
+          },
+        },
+        gender: {
           type: String,
-          minLength: 1,
+          enum: {
+            values: ["male", "female", "other"],
+            message: "Gender '{VALUE}' is not supported by the database",
+          },
         },
+        tel: String,
+        birthday: Date,
       },
-      gender: {
-        type: String,
-        enum: {
-          values: ["male", "female", "other"],
-          message: "Gender '{VALUE}' is not supported by the database",
-        },
+      rating: {
+        type: [Number],
+        min: 1,
+        max: 5,
       },
-      tel: String,
-      birthday: Date,
+      favorites: { type: [Schema.Types.ObjectId], ref: "product" },
     },
-    rate: {
-      type: [Number],
-      min: 1,
-      max: 5,
-    },
-    favorites: { type: [Schema.Types.ObjectId], ref: "product" },
   },
   { timestamps: true }
 );
