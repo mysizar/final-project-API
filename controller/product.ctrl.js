@@ -117,12 +117,15 @@ export async function getById(req, res, next) {
 /*------------------- post ------------------*/
 
 export async function create(req, res, next) {
-  const csrf = req.body.secure.newCSRF;
+  const { csrf, uid } = req.body.secure;
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
   });
+
+  if (uid !== req.body.owner)
+    return next(errorCreator("You can't create items for another user!", 401));
 
   try {
     const doc = await ProductModel.create(req.body);
@@ -145,7 +148,7 @@ export async function create(req, res, next) {
 /*------------------- put ------------------*/
 
 export async function updateProduct(req, res, next) {
-  const csrf = req.body.secure.newCSRF;
+  const { csrf, uid } = req.body.secure;
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
@@ -153,11 +156,16 @@ export async function updateProduct(req, res, next) {
   });
 
   try {
+    const result = await ProductModel.findById(req.params.id);
+    if (!result) return next(errorCreator("Product not found", 400));
+
+    if (uid !== result.owner.toString())
+      return next(errorCreator("You cannot update another user's item!", 401));
+
     const doc = await ProductModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
-    if (!doc) return next(errorCreator("Product not found", 400));
 
     res.status(200).json({
       code: 200,
@@ -177,7 +185,7 @@ export async function updateProduct(req, res, next) {
 /*------------------- delete ------------------*/
 
 export async function deleteProduct(req, res, next) {
-  const csrf = req.body.secure.newCSRF;
+  const { csrf, uid } = req.body.secure;
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
@@ -185,8 +193,13 @@ export async function deleteProduct(req, res, next) {
   });
 
   try {
+    const result = await ProductModel.findById(req.params.id);
+    if (!result) return next(errorCreator("Product not found", 400));
+
+    if (uid !== result.owner.toString())
+      return next(errorCreator("You cannot delete another user's item!", 401));
+
     const doc = await ProductModel.findByIdAndDelete(req.params.id);
-    if (!doc) return next(errorCreator("Product not found", 400));
 
     res.status(204);
   } catch (err) {

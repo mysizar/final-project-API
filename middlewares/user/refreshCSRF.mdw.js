@@ -21,7 +21,7 @@ export default async function refreshCSRF(req, res, next) {
     const newCSRF = createCSRF();
     await UserModel.findByIdAndUpdate(decodeJWT.id, { csrf: newCSRF });
 
-    req.body.secure = { newCSRF };
+    req.body.secure = { csrf: newCSRF, uid: decodeJWT.id };
     next();
   } catch (err) {
     console.log("refreshCSRF error -->", err);

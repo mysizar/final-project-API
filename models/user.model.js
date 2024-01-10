@@ -47,13 +47,15 @@ const UserSchema = new Schema(
           message: "Gender '{VALUE}' is not supported by the database",
         },
       },
-      rate: {
-        average: Number,
-        votes: Number,
-      },
       tel: String,
       birthday: Date,
     },
+    rate: {
+      type: [Number],
+      min: 1,
+      max: 5,
+    },
+    favorites: { type: [Schema.Types.ObjectId], ref: "product" },
   },
   { timestamps: true }
 );
