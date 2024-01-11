@@ -157,7 +157,7 @@ export async function updateProduct(req, res, next) {
   });
 
   // loop through the object and create paths to update nested objects
-  const update = buildPaths(req.body);
+  const updateObj = buildPaths(req.body);
 
   try {
     const result = await ProductModel.findById(req.params.id);
@@ -168,7 +168,7 @@ export async function updateProduct(req, res, next) {
 
     const doc = await ProductModel.findByIdAndUpdate(
       req.params.id,
-      { $set: update } /*req.body*/,
+      { $set: updateObj },
       {
         new: true,
         runValidators: true,
