@@ -41,6 +41,7 @@ export function login(req, res, next) {
     .cookie("csrf", csrf, {
       httpOnly: true,
       secure: false,
+      maxAge: 604800000, // 7 days
     })
     .json({
       code: 200,
@@ -79,6 +80,7 @@ export async function logout(req, res, next) {
     .clearCookie("csrf", csrf, {
       httpOnly: true,
       secure: true,
+      maxAge: 604800000, // 7 days
     })
     .json({
       code: 200,
@@ -115,6 +117,28 @@ export async function getAbout(req, res, next) {
   }
 }
 
+export async function getNewJWT(req, res, next) {
+  const { jwt, csrf } = req.body.secure;
+
+  res
+    .status(200)
+    .cookie("jwt", jwt, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 3600000, // 1 hour
+    })
+    .cookie("csrf", csrf, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 604800000, // 7 days
+    })
+    .json({
+      code: 200,
+      message: "JWT successfully refreshed",
+    });
+}
+
 /* ------------------------- put ------------------------- */
 
 export async function updateAbout(req, res, next) {
@@ -123,6 +147,7 @@ export async function updateAbout(req, res, next) {
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
+    maxAge: 604800000, // 7 days
   });
 
   // loop through the object and create paths to update nested objects
@@ -160,6 +185,7 @@ export async function updateRating(req, res, next) {
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
+    maxAge: 604800000, // 7 days
   });
 
   const score = req.params.score;
@@ -203,6 +229,7 @@ export async function updateFav(req, res, next) {
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
+    maxAge: 604800000, // 7 days
   });
 
   try {
@@ -233,12 +260,15 @@ export async function updateFav(req, res, next) {
   }
 }
 
+/* ------------------------- delete ------------------------- */
+
 export async function deleteFav(req, res, next) {
   const { csrf, uid } = req.body.secure;
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
+    maxAge: 604800000, // 7 days
   });
 
   try {
@@ -297,10 +327,11 @@ export async function deleteUser(req, res, next) {
       .clearCookie("csrf", csrf, {
         httpOnly: true,
         secure: true,
+        maxAge: 604800000, // 7 days
       })
       .json({
         code: 200,
-        message: `User ${decodeJWT.id} successfully deleted`,
+        message: `User <${decodeJWT.id}> successfully deleted`,
       });
   } catch (err) {
     console.log("delete user --> controller error -->", err.message);

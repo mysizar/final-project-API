@@ -123,6 +123,7 @@ export async function create(req, res, next) {
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
+    maxAge: 604800000, // 7 days
   });
 
   if (uid !== req.body.owner)
@@ -154,6 +155,7 @@ export async function updateProduct(req, res, next) {
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
+    maxAge: 604800000, // 7 days
   });
 
   // loop through the object and create paths to update nested objects
@@ -198,6 +200,7 @@ export async function deleteProduct(req, res, next) {
   res.cookie("csrf", csrf, {
     httpOnly: true,
     secure: false,
+    maxAge: 604800000, // 7 days
   });
 
   try {

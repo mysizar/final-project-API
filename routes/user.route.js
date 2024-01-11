@@ -4,6 +4,7 @@ import {
   logout,
   register,
   getAbout,
+  getNewJWT,
   updateAbout,
   updateRating,
   updateFav,
@@ -14,6 +15,7 @@ import checkInputs from "../lib/checkInputs.js";
 import validation from "../middlewares/user/validation.mdw.js";
 import verifyUser from "../middlewares/user/verification.mdw.js";
 import refreshCSRF from "../middlewares/user/refreshCSRF.mdw.js";
+import refreshJWT from "../middlewares/user/refreshJWT.mdw.js";
 
 export const userRouter = Router();
 
@@ -22,6 +24,7 @@ userRouter.post("/login", checkInputs(), verifyUser, login);
 userRouter.post("/logout", logout);
 
 userRouter.get("/about/:id", getAbout);
+userRouter.get("/refresh", refreshJWT, getNewJWT);
 
 userRouter.put("/update/about", refreshCSRF, updateAbout);
 userRouter.put("/update/favorites/:item", refreshCSRF, updateFav);
@@ -30,10 +33,7 @@ userRouter.put("/update/rating/:id/:score", refreshCSRF, updateRating);
 userRouter.delete("/delete/favorites/:item", refreshCSRF, deleteFav);
 userRouter.delete("/delete/user", deleteUser);
 
-// TODO: reset password
-// TODO: change email
 // TODO: confirm email
-
-// TODO: refreshJWT
-
-// TODO: deleteUser
+// TODO: forgot password
+// TODO: change password
+// TODO: change email
