@@ -24,6 +24,7 @@ app.use(
 // Endpoints with sanitizing
 app.use("/user", check("**").trim().escape(), userRouter);
 app.use("/product", check("**").trim().escape(), productRouter);
+app.get("/cron", (req, res) => res.status(200).json({ status: "OK" }));
 
 // 404-Page
 app.all("*", (req, res, next) => {
