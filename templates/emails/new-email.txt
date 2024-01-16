@@ -1,0 +1,5 @@
+Hey!
+Du hast diese Nachricht erhalten, weil du die Änderung deiner E-Mail-Adresse in deinem Benutzerprofil auf floh.store beantragt hast.
+Um die neue E-Mail-Adresse zu bestätigen, klicke Sie bitte auf den folgenden Link:
+link_to_replace
+Wenn du keine Änderung deiner E-Mail-Adresse beantragt hast, ignoriere diese Nachricht und wende dich an den Support der Website.

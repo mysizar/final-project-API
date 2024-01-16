@@ -1,13 +1,19 @@
-import buildPaths from "../lib/buildPaths.js";
+import rebuildPaths from "../lib/rebuildPaths.js";
 import errorCreator from "../lib/errorCreator.js";
 import { verifyJwt } from "../lib/jwt.js";
 import { UserModel } from "../models/user.model.js";
+import { sendEmail } from "../config/mail.connect.js";
+import { createCSRF } from "../lib/csrf.js";
 
 /* ------------------------- post ------------------------- */
 
 export async function register(req, res, next) {
+  const activationString = createCSRF();
+  const user = { ...req.body, activationString };
+
   try {
-    const { _id, email } = await UserModel.create(req.body);
+    const { _id, email } = await UserModel.create(user);
+    await sendEmail("registration", email, activationString);
     const data = { uid: _id, email };
 
     res.status(201).json({
@@ -90,6 +96,54 @@ export async function logout(req, res, next) {
 
 /* ------------------------- get ------------------------- */
 
+export async function confirmRegister(req, res, next) {
+  try {
+    const doc = await UserModel.findOneAndUpdate(
+      { activationString: req.params.token },
+      { activated: true, $unset: { activationString: 1 } }
+    );
+
+    if (!doc) return next(errorCreator("Invalid verification key", 401));
+
+    res.status(200).redirect("https://floh.store/login").json({
+      code: 200,
+      message: "Email successfully confirmed. Please log in!",
+      uid: doc["_id"],
+    });
+  } catch (err) {
+    console.log("confirm user error -->", err);
+    next(errorCreator("Database error", 500));
+  }
+}
+
+export async function confirmNewEmail(req, res, next) {
+  try {
+    const doc = await UserModel.findOneAndUpdate(
+      { activationString: req.params.token },
+      [
+        // aggregation pipeline [] is needed to get (calculate) value of the 'newEmail' field and set this value to the 'email' field.
+        {
+          $set: { email: { $toString: "$newEmail" } },
+        },
+        {
+          $unset: ["newEmail", "activationString"],
+        },
+      ]
+    ).select("email");
+
+    if (!doc) return next(errorCreator("Invalid verification key", 401));
+
+    res.status(200).redirect("https://floh.store/new-email");
+  } catch (err) {
+    if (err.code === 11000) {
+      next(errorCreator("User already exists", 401));
+    } else {
+      console.log("confirmNewEmail --> controller error -->", err);
+      next(errorCreator("Database error", 500));
+    }
+  }
+}
+
 export async function getAbout(req, res, next) {
   const decodeJWT = verifyJwt(req.cookies.jwt);
 
@@ -151,7 +205,7 @@ export async function updateAbout(req, res, next) {
   });
 
   // loop through the object and create paths to update nested objects
-  const updateObj = buildPaths(req.body.about, "info.about");
+  const updateObj = rebuildPaths(req.body.about, "info.about");
 
   try {
     const doc = await UserModel.findByIdAndUpdate(
@@ -255,6 +309,45 @@ export async function updateFav(req, res, next) {
       next(errorCreator("<item> must contain 24 characters", 400));
     } else {
       console.log("update user/favorite --> controller error -->", err.message);
+      next(errorCreator("Database error", 500));
+    }
+  }
+}
+
+export async function updateEmail(req, res, next) {
+  const { csrf, uid } = req.body.secure;
+  delete req.body.secure;
+  res.cookie("csrf", csrf, {
+    httpOnly: true,
+    secure: false,
+    maxAge: 604800000, // 7 days
+  });
+
+  const activationString = createCSRF();
+
+  try {
+    const doc = await UserModel.findByIdAndUpdate(
+      uid,
+      { newEmail: req.body.newEmail, activationString },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("newEmail");
+    if (!doc) return next(errorCreator("User not found", 400));
+
+    await sendEmail("change-email", req.body.newEmail, activationString);
+
+    res.status(200).json({
+      code: 200,
+      message: "New email successfully added. Please confirm email!",
+      doc,
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      next(errorCreator(err.message, 400));
+    } else {
+      console.log("update user/email --> controller error -->", err.message);
       next(errorCreator("Database error", 500));
     }
   }

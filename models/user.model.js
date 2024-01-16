@@ -18,6 +18,17 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    activationString: String,
+    newEmail: {
+      type: String,
+      unique: true,
+      validate: {
+        validator: function (value) {
+          return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(value);
+        },
+        message: "Invalid email address format",
+      },
+    },
     info: {
       about: {
         username: {

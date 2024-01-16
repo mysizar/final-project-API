@@ -1,0 +1,12 @@
+Welcome!
+We're excited to have you get started. First, you need to confirm your account. Just click the link below.
+link_to_replace
+If that doesn't work, copy and paste the link in your browser.
+If you have any questions, just reply to this email - we're always happy to help you.
+Cheers,
+The Dev Team
+
+You received this email because you just signed up for a new account.
+If it looks weird, View it in your browser.
+If these emails get annoying, please feel free to unsubscribe:
+link_to_unsubscribe

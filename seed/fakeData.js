@@ -16,7 +16,7 @@ console.log("\u001B[33mPlease wait...\u001B[39m");
 const generateProducts = async (num) => {
   // get all users ID and location from Database
   const users = await UserModel.aggregate([
-    { $group: { _id: { id: "$_id", loc: "$about.location" } } },
+    { $group: { _id: { id: "$_id", loc: "$info.about.location" } } },
   ]);
 
   // return random user ID

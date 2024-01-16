@@ -1,4 +1,4 @@
-import buildPaths from "../lib/buildPaths.js";
+import rebuildPaths from "../lib/rebuildPaths.js";
 import errorCreator from "../lib/errorCreator.js";
 import { ProductModel } from "../models/product.model.js";
 
@@ -159,7 +159,7 @@ export async function updateProduct(req, res, next) {
   });
 
   // loop through the object and create paths to update nested objects
-  const updateObj = buildPaths(req.body);
+  const updateObj = rebuildPaths(req.body);
 
   try {
     const result = await ProductModel.findById(req.params.id);
