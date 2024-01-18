@@ -28,12 +28,34 @@ export async function sendEmail(type, userEmail, token) {
       link = "https://api.floh.store/user/confirm/new-email/" + token;
       // html = readFileSync("templates/emails/confirm.html", "utf-8");
       // html = html.replace(/link_to_replace/g, link);
-      text = readFileSync("templates/emails/new-email.txt", "utf-8");
+      text = readFileSync("templates/emails/change-email.txt", "utf-8");
       text = text.replace(/link_to_replace/g, link);
       break;
 
+    case "recover-password":
+      subject = "Forgot your password?";
+      link = "https://floh.store/profile/recover-password/" + token;
+      // html = readFileSync("templates/emails/confirm.html", "utf-8");
+      // html = html.replace(/link_to_replace/g, link);
+      text = readFileSync("templates/emails/recover-password.txt", "utf-8");
+      text = text.replace(/link_to_replace/g, link);
+      break;
+
+    case "password-changed":
+      subject = "Your password has been successfully changed";
+      // html = readFileSync("templates/emails/confirm.html", "utf-8");
+      // html = html.replace(/link_to_replace/g, link);
+      text = readFileSync("templates/emails/pass-changed.txt", "utf-8");
+      text = text.replace(/link_to_replace/g, link);
+      break;
+
+    case "test":
+      subject = "Test email";
+      html = { path: token };
+      break;
+
     default:
-      console.log("sendEmail error --> wrong message 'type'");
+      console.log("sendEmail error --> wrong 'type' of message");
       break;
   }
 

@@ -94,6 +94,53 @@ export async function logout(req, res, next) {
     });
 }
 
+export async function passRecover(req, res, next) {
+  const email = req.body.email;
+  const activationString = createCSRF();
+
+  try {
+    const doc = await UserModel.findOneAndUpdate(
+      { email },
+      { activationString }
+    );
+    if (!doc) return next(errorCreator("User not found", 400));
+
+    await sendEmail("recover-password", email, activationString);
+
+    res.status(200).json({
+      code: 200,
+      message: "Recovery request succeeded. Please check your email!",
+    });
+  } catch (err) {
+    console.log("password reset --> controller error -->", err);
+    next(errorCreator("Database error", 500));
+  }
+}
+
+export async function applyNewPass(req, res, next) {
+  const { token, password } = req.body;
+  if (!password) return next(errorCreator("<password> is required", 400));
+  try {
+    const doc = await UserModel.findOneAndUpdate(
+      { activationString: token },
+      { password: password, $unset: { activationString: 1 } }
+    ).select("email");
+
+    if (!doc) return next(errorCreator("Invalid verification key", 401));
+
+    await sendEmail("password-changed", doc.email);
+
+    res.status(200).redirect("https://floh.store/profile/signin");
+    // .json({
+    //   code: 200,
+    //   message: "Password changed successfully. Please log in!",
+    // });
+  } catch (err) {
+    console.log("apply new password --> controller error -->", err);
+    next(errorCreator("Database error", 500));
+  }
+}
+
 /* ------------------------- get ------------------------- */
 
 export async function confirmRegister(req, res, next) {
@@ -105,11 +152,12 @@ export async function confirmRegister(req, res, next) {
 
     if (!doc) return next(errorCreator("Invalid verification key", 401));
 
-    res.status(200).redirect("https://floh.store/login").json({
-      code: 200,
-      message: "Email successfully confirmed. Please log in!",
-      uid: doc["_id"],
-    });
+    res.status(200).redirect("https://floh.store/profile/signin");
+    // .json({
+    //   code: 200,
+    //   message: "Email successfully confirmed. Please log in!",
+    //   uid: doc["_id"],
+    // });
   } catch (err) {
     console.log("confirm user error -->", err);
     next(errorCreator("Database error", 500));
@@ -342,6 +390,47 @@ export async function updateEmail(req, res, next) {
       code: 200,
       message: "New email successfully added. Please confirm email!",
       doc,
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      next(errorCreator(err.message, 400));
+    } else {
+      console.log("update user/email --> controller error -->", err.message);
+      next(errorCreator("Database error", 500));
+    }
+  }
+}
+
+export async function updatePass(req, res, next) {
+  const { csrf, uid } = req.body.secure;
+  delete req.body.secure;
+  res.cookie("csrf", csrf, {
+    httpOnly: true,
+    secure: false,
+    maxAge: 604800000, // 7 days
+  });
+
+  const { currentPass, password } = req.body;
+  if (!password) return next(errorCreator("<password> is required", 400));
+  try {
+    const user = await UserModel.findById(uid).select("email password");
+    const matchUser = await user.auth(currentPass);
+    if (!matchUser) return next(errorCreator("Invalid user data", 401));
+
+    const doc = await UserModel.findByIdAndUpdate(
+      uid,
+      { password: password },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    await sendEmail("password-changed", user.email);
+
+    res.status(200).json({
+      code: 200,
+      message: "Password changed successfully!",
     });
   } catch (err) {
     if (err.name === "ValidationError") {
