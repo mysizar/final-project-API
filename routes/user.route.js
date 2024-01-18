@@ -45,7 +45,7 @@ userRouter.put("/update/email", refreshCSRF, updateEmail);
 userRouter.put("/update/password", refreshCSRF, updatePass);
 
 userRouter.delete("/delete/favorites/:item", refreshCSRF, deleteFav);
-userRouter.delete("/delete/user", deleteUser);
+userRouter.delete("/delete/account", deleteUser);
 
 // test route for email templates
 userRouter.post(
