@@ -47,6 +47,7 @@ export function login(req, res, next) {
     .cookie("csrf", csrf, {
       httpOnly: true,
       secure: false,
+      sameSite: "Lax",
       maxAge: 604800000, // 7 days
     })
     .json({
