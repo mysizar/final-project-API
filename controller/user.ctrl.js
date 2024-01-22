@@ -40,14 +40,14 @@ export function login(req, res, next) {
     .status(200)
     .cookie("jwt", jwt, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: true,
+      sameSite: "None",
       maxAge: 3600000, // 1 hour
     })
     .cookie("csrf", csrf, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: true,
+      sameSite: "None",
       maxAge: 604800000, // 7 days
     })
     .json({
