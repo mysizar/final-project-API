@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://localhost:5173",
     credentials: true,
   })
 );
@@ -46,6 +46,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(process.env.PORT, () => {
+const expressServer = app.listen(process.env.PORT, () => {
   console.log(`Server is listening on port: ${process.env.PORT}`);
 });
