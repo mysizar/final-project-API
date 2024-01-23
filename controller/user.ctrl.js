@@ -42,14 +42,14 @@ export function login(req, res, next) {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      domain: "floh.store",
+      // domain: "floh.store",           // for production
       maxAge: 3600000, // 1 hour
     })
     .cookie("csrf", csrf, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      domain: "floh.store",
+      // domain: "floh.store",           // for production
       maxAge: 604800000, // 7 days
     })
     .json({
