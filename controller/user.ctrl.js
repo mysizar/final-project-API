@@ -81,12 +81,13 @@ export async function logout(req, res, next) {
     .clearCookie("jwt", jwt, {
       httpOnly: true,
       secure: true,
-      sameSite: "Lax",
+      sameSite: "None",
       maxAge: 3600000, // 1 hour
     })
     .clearCookie("csrf", csrf, {
       httpOnly: true,
       secure: true,
+      sameSite: "None",
       maxAge: 604800000, // 7 days
     })
     .json({
@@ -227,13 +228,14 @@ export async function getNewJWT(req, res, next) {
     .status(200)
     .cookie("jwt", jwt, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: true,
+      sameSite: "None",
       maxAge: 3600000, // 1 hour
     })
     .cookie("csrf", csrf, {
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: "None",
       maxAge: 604800000, // 7 days
     })
     .json({
@@ -249,7 +251,8 @@ export async function updateAbout(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
     maxAge: 604800000, // 7 days
   });
 
@@ -287,7 +290,8 @@ export async function updateRating(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
     maxAge: 604800000, // 7 days
   });
 
@@ -331,7 +335,8 @@ export async function updateFav(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
     maxAge: 604800000, // 7 days
   });
 
@@ -368,7 +373,8 @@ export async function updateEmail(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
     maxAge: 604800000, // 7 days
   });
 
@@ -407,7 +413,8 @@ export async function updatePass(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
     maxAge: 604800000, // 7 days
   });
 
@@ -450,7 +457,8 @@ export async function deleteFav(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
     maxAge: 604800000, // 7 days
   });
 
@@ -504,12 +512,13 @@ export async function deleteUser(req, res, next) {
       .clearCookie("jwt", jwt, {
         httpOnly: true,
         secure: true,
-        sameSite: "Lax",
+        sameSite: "None",
         maxAge: 3600000, // 1 hour
       })
       .clearCookie("csrf", csrf, {
         httpOnly: true,
         secure: true,
+        sameSite: "None",
         maxAge: 604800000, // 7 days
       })
       .json({
