@@ -16,7 +16,7 @@ export async function sendEmail(type, userEmail, token) {
   switch (type) {
     case "registration":
       subject = "Willkommen im FLOH.STORE. Bitte Email bestätigen";
-      link = "https://api.floh.store/user/confirm/email/" + token;
+      link = "https://api.floh.store/user/confirm/register/" + token;
       html = readFileSync("templates/emails/confirm.html", "utf-8");
       html = html.replace(/link_to_replace/g, link);
       text = readFileSync("templates/emails/confirm.txt", "utf-8");
