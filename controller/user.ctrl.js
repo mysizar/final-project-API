@@ -199,12 +199,13 @@ export async function confirmNewEmail(req, res, next) {
 }
 
 export async function getAbout(req, res, next) {
+  const isLoggedIn = req.cookies.jwt ? true : false;
   const decodeJWT = verifyJwt(req.cookies.jwt);
 
   try {
     const doc = await UserModel.findById(req.params.id).select(
       /* get information about yourself or someone else? */
-      decodeJWT.id === req.params.id
+      isLoggedIn && decodeJWT.id === req.params.id
         ? "email info createdAt"
         : "createdAt info.about.username info.rating"
     );
