@@ -42,14 +42,14 @@ export function login(req, res, next) {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      // domain: "floh.store",           // for production
+      domain: process.env.DOMAIN,
       maxAge: 3600000, // 1 hour
     })
     .cookie("csrf", csrf, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      // domain: "floh.store",           // for production
+      domain: process.env.DOMAIN,
       maxAge: 604800000, // 7 days
     })
     .json({
@@ -84,12 +84,14 @@ export async function logout(req, res, next) {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      domain: process.env.DOMAIN,
       maxAge: 3600000, // 1 hour
     })
     .clearCookie("csrf", csrf, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      domain: process.env.DOMAIN,
       maxAge: 604800000, // 7 days
     })
     .json({
@@ -232,12 +234,14 @@ export async function getNewJWT(req, res, next) {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      domain: process.env.DOMAIN,
       maxAge: 3600000, // 1 hour
     })
     .cookie("csrf", csrf, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      domain: process.env.DOMAIN,
       maxAge: 604800000, // 7 days
     })
     .json({
@@ -255,6 +259,7 @@ export async function updateAbout(req, res, next) {
     httpOnly: true,
     secure: true,
     sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -294,6 +299,7 @@ export async function updateRating(req, res, next) {
     httpOnly: true,
     secure: true,
     sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -339,6 +345,7 @@ export async function updateFav(req, res, next) {
     httpOnly: true,
     secure: true,
     sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -377,6 +384,7 @@ export async function updateEmail(req, res, next) {
     httpOnly: true,
     secure: true,
     sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -417,6 +425,7 @@ export async function updatePass(req, res, next) {
     httpOnly: true,
     secure: true,
     sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -461,6 +470,7 @@ export async function deleteFav(req, res, next) {
     httpOnly: true,
     secure: true,
     sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -515,12 +525,14 @@ export async function deleteUser(req, res, next) {
         httpOnly: true,
         secure: true,
         sameSite: "None",
+        domain: process.env.DOMAIN,
         maxAge: 3600000, // 1 hour
       })
       .clearCookie("csrf", csrf, {
         httpOnly: true,
         secure: true,
         sameSite: "None",
+        domain: process.env.DOMAIN,
         maxAge: 604800000, // 7 days
       })
       .json({
