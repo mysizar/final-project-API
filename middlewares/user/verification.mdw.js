@@ -13,6 +13,14 @@ export default async function verifyUser(req, res, next) {
     const matchUser = await user.auth(password);
     if (!matchUser) return next(errorCreator("Invalid user data", 401));
 
+    if (!user.activated)
+      return next(
+        errorCreator(
+          "Account is not activated! Check your email and confirm registration!",
+          401
+        )
+      );
+
     const jwt = createJwt(user);
     const csrf = createCSRF();
 

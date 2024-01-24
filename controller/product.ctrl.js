@@ -36,7 +36,9 @@ export async function getByCtg(req, res, next) {
       .skip(skip);
 
     if (products.length === 0)
-      return next(errorCreator(`Category <${category}> not found`, 400));
+      return next(
+        errorCreator(`No items found in category <${category}>!`, 400)
+      );
 
     res.status(200).json({
       code: 200,
