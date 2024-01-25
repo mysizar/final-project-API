@@ -200,7 +200,7 @@ export async function confirmNewEmail(req, res, next) {
 
 export async function getAbout(req, res, next) {
   const isLoggedIn = req.cookies.jwt ? true : false;
-  const decodeJWT = verifyJwt(req.cookies.jwt);
+  const decodeJWT = req.cookies.jwt ? verifyJwt(req.cookies.jwt) : null;
 
   try {
     const doc = await UserModel.findById(req.params.id).select(
@@ -353,7 +353,7 @@ export async function updateFav(req, res, next) {
   try {
     const doc = await UserModel.findByIdAndUpdate(
       uid,
-      { $push: { "info.favorites": req.params.item } },
+      { $addToSet: { "info.favorites": req.params.item } },
       {
         new: true,
         runValidators: true,
