@@ -136,11 +136,10 @@ export async function applyNewPass(req, res, next) {
 
     await sendEmail("password-changed", doc.email);
 
-    res.status(200).redirect("https://floh.store/profile/signin");
-    // .json({
-    //   code: 200,
-    //   message: "Password changed successfully. Please log in!",
-    // });
+    res.status(200).json({
+      code: 200,
+      message: "Password changed successfully. Please log in!",
+    });
   } catch (err) {
     console.log("apply new password --> controller error -->", err);
     next(errorCreator("Database error", 500));
