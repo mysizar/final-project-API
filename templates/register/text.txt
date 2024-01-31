@@ -1,0 +1,16 @@
+Willkommen!
+
+Sie erhalten diese Nachricht weil Sie sich bei uns Registriert haben.
+
+Bitte klicken Sie auf den untenstehenden Link, um den Vorgang abzuschließen:
+
+link_to_replace
+
+Wenn das nicht funktioniert, kopieren Sie den Link und fügen Sie ihn in Ihren Browser ein.
+
+Wenn Sie kein Konto bei uns erstellt haben, können Sie diese Nachricht ignorieren und Ihre Daten werden nicht gespeichert.
+
+Bei weiteren Fragen können Sie unseren Support via flohstore@gmail.com kontaktieren.
+
+Mit freundlichen Grüßen
+Ihr Dev Team

@@ -1,0 +1,16 @@
+Fast Geschafft!
+
+Sie erhalten diese Nachricht weil Sie Ihre Email-adresse geändert haben.
+
+Bitte klicken Sie auf den untenstehenden Link, um den Vorgang abzuschließen:
+
+link_to_replace
+
+Wenn das nicht funktioniert, kopieren Sie den Link und fügen Sie ihn in Ihren Browser ein.
+
+Bei weiteren Fragen können Sie unseren Support via flohstore@gmail.com kontaktieren
+
+Wenn Sie dies nicht angefordert haben, können Sie diese Nachricht ignorieren und der Vorgang wird nicht durchgeführt.
+
+Mit freundlichen Grüßen
+Ihr Dev Team

@@ -1,0 +1,16 @@
+Hallo!
+
+Sie erhalten diese Nachricht weil sie ein Passwort-Reset angefordert haben.
+
+Bitte klicken Sie auf den untenstehenden Link, um den Vorgang abzuschließen:
+
+link_to_replace
+
+Wenn das nicht funktioniert, kopieren Sie den Link und fügen Sie ihn in Ihren Browser ein.
+
+Bei weiteren Fragen können Sie unseren Support via flohstore@gmail.com kontaktieren.
+
+Wenn Sie kein Passwort-Reset angefordert haben, empfehlen wir, sich umgehend mit unserem Support in Verbindung zu setzen.
+
+Mit freundlichen Grüßen
+Ihr Dev Team

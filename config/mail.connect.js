@@ -15,38 +15,45 @@ export async function sendEmail(type, userEmail, token) {
   let subject, link, html, text;
   switch (type) {
     case "registration":
-      subject = "Willkommen im FLOH.STORE. Bitte Email bestätigen";
+      subject = "Willkommen im floh.store. Bitte E-Mail bestätigen";
       link = "https://api.floh.store/user/confirm/register/" + token;
-      html = readFileSync("templates/emails/confirm.html", "utf-8");
+      html = readFileSync("templates/register/index.html", "utf-8");
       html = html.replace(/link_to_replace/g, link);
-      text = readFileSync("templates/emails/confirm.txt", "utf-8");
-      text = text.replace(/link_to_replace/g, link);
-      break;
-
-    case "change-email":
-      subject = "Bitte bestätige deine neue E-Mail-Adresse";
-      link = "https://api.floh.store/user/confirm/new-email/" + token;
-      // html = readFileSync("templates/emails/confirm.html", "utf-8");
-      // html = html.replace(/link_to_replace/g, link);
-      text = readFileSync("templates/emails/change-email.txt", "utf-8");
+      text = readFileSync("templates/register/text.txt", "utf-8");
       text = text.replace(/link_to_replace/g, link);
       break;
 
     case "recover-password":
-      subject = "Forgot your password?";
+      subject = "Passwort vergessen?";
       link = "https://floh.store/profile/recover-password/" + token;
-      // html = readFileSync("templates/emails/confirm.html", "utf-8");
-      // html = html.replace(/link_to_replace/g, link);
-      text = readFileSync("templates/emails/recover-password.txt", "utf-8");
+      html = readFileSync("templates/recoverPass/index.html", "utf-8");
+      html = html.replace(/link_to_replace/g, link);
+      text = readFileSync("templates/recoverPass/text.txt", "utf-8");
+      text = text.replace(/link_to_replace/g, link);
+      break;
+
+    case "change-email":
+      subject = "Bitte neue E-Mail-Adresse bestätigen";
+      link = "https://api.floh.store/user/confirm/new-email/" + token;
+      html = readFileSync("templates/changeEmail/index.html", "utf-8");
+      html = html.replace(/link_to_replace/g, link);
+      text = readFileSync("templates/changeEmail/text.txt", "utf-8");
       text = text.replace(/link_to_replace/g, link);
       break;
 
     case "password-changed":
-      subject = "Your password has been successfully changed";
-      // html = readFileSync("templates/emails/confirm.html", "utf-8");
-      // html = html.replace(/link_to_replace/g, link);
-      text = readFileSync("templates/emails/pass-changed.txt", "utf-8");
-      text = text.replace(/link_to_replace/g, link);
+      subject = "Passwort erfolgreich geändert";
+      html = readFileSync("templates/changedPass/index.html", "utf-8");
+      text = readFileSync("templates/changedPass/text.txt", "utf-8");
+      break;
+
+    case "message":
+      subject = "Neue private Nachricht auf floh.store";
+      link = "https://floh.store/products/" + token.pid;
+      html = readFileSync("templates/newMessage/index.html", "utf-8");
+      const el = `<a href="${link}" target="_blank" rel="noopener noreferrer">${token.title}</a>`;
+      html = html.replace(/element_to_replace/g, el);
+      text = readFileSync("templates/newMessage/text.txt", "utf-8");
       break;
 
     case "test":
