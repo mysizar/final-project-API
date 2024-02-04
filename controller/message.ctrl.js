@@ -22,10 +22,64 @@ export default async function socketListener(socket) {
 
   // backup messages
   const messages = await MessageModel.find({
-    $or: [{ to: socket.userID }, { from: socket.userID }],
+    $or: [{ to_uid: socket.userID }, { from: socket.userID }],
   }).sort({ time: 1 });
   socket.emit("backup messages", messages);
-  await MessageModel.updateMany({ offline: true }, { $unset: { offline: 1 } });
+
+  socket.on("session update", async (data) => {
+    const oldUserID = socket.userID;
+    // socket
+    socket.sessionID = data.sessionID;
+    socket.userID = data.userID;
+    socket.username = data.username;
+    // sessionStore
+    sessionStore.saveSession(data.sessionID, {
+      userID: data.userID,
+      username: data.username,
+    });
+    // update messages in Database
+    await MessageModel.updateMany(
+      { to_uid: oldUserID },
+      { to_uid: data.userID }
+    );
+    await MessageModel.updateMany({ from: oldUserID }, { from: data.userID });
+    // update session in Database
+    await SocketModel.findOneAndUpdate(
+      { sessionID: data.sessionID },
+      {
+        sessionID: data.sessionID,
+        userID: data.userID,
+        username: data.username,
+      },
+      { upsert: true }
+    );
+    // send to frontend
+    socket.emit("session", {
+      sessionID: data.sessionID,
+      userID: data.userID,
+      username: data.username,
+    });
+    // update users
+    users = users.map((i) =>
+      i.userID !== oldUserID
+        ? i
+        : {
+            userID: data.userID,
+            username: data.username,
+            socketID: socket.id,
+          }
+    );
+    io.emit("users", users);
+    // update messages
+    const messages = await MessageModel.find({
+      $or: [{ to_uid: socket.userID }, { from: socket.userID }],
+    }).sort({ time: 1 });
+    socket.emit("backup messages", messages);
+  });
+
+  socket.on("new messages read", async (msgsToUpdate) => {
+    await MessageModel.updateMany(msgsToUpdate, { $unset: { notRead: 1 } });
+  });
 
   socket.on("private message", async ({ product, from, to, to_uid, text }) => {
     const data = {
@@ -34,10 +88,10 @@ export default async function socketListener(socket) {
       to_uid, // userID
       text,
       time: new Date(),
+      notRead: true,
     };
-    await MessageModel.create({ ...data, to: to_uid });
+    await MessageModel.create(data);
     socket.to(to).emit("private message", data);
-    // socket.to(to).to(socket.userID).emit("private message", data);
   });
 
   socket.on("disconnect", async () => {

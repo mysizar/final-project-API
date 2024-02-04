@@ -7,10 +7,10 @@ const MessageSchema = new Schema({
     required: true,
   },
   from: { type: String, required: true },
-  to: { type: String, required: true },
+  to_uid: { type: String, required: true },
   text: { type: String, required: true },
   time: { type: Date, required: true },
-  offline: Boolean,
+  notRead: Boolean,
 });
 
 export const MessageModel = model("message", MessageSchema);

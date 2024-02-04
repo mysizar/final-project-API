@@ -43,7 +43,7 @@ export function login(req, res, next) {
       secure: true,
       sameSite: "None",
       domain: process.env.DOMAIN,
-      maxAge: 3600000, // 1 hour
+      maxAge: 604800000, // 7 days
     })
     .cookie("csrf", csrf, {
       httpOnly: true,
@@ -85,7 +85,7 @@ export async function logout(req, res, next) {
       secure: true,
       sameSite: "None",
       domain: process.env.DOMAIN,
-      maxAge: 3600000, // 1 hour
+      maxAge: 604800000, // 7 days
     })
     .clearCookie("csrf", csrf, {
       httpOnly: true,
@@ -235,7 +235,7 @@ export async function getNewJWT(req, res, next) {
       secure: true,
       sameSite: "None",
       domain: process.env.DOMAIN,
-      maxAge: 3600000, // 1 hour
+      maxAge: 604800000, // 7 days
     })
     .cookie("csrf", csrf, {
       httpOnly: true,
@@ -526,7 +526,7 @@ export async function deleteUser(req, res, next) {
         secure: true,
         sameSite: "None",
         domain: process.env.DOMAIN,
-        maxAge: 3600000, // 1 hour
+        maxAge: 604800000, // 7 days
       })
       .clearCookie("csrf", csrf, {
         httpOnly: true,
