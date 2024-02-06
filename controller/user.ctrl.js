@@ -4,6 +4,7 @@ import { verifyJwt } from "../lib/jwt.js";
 import { UserModel } from "../models/user.model.js";
 import { sendEmail } from "../config/mail.connect.js";
 import { createCSRF } from "../lib/csrf.js";
+import { ProductModel } from "../models/product.model.js";
 
 /* ------------------------- post ------------------------- */
 
@@ -513,11 +514,12 @@ export async function deleteUser(req, res, next) {
 
     const user = await UserModel.findById(decodeJWT.id);
 
-    if (!user) return next(errorCreator("User not found!", 401));
+    if (!user) return next(errorCreator("User not found!", 400));
     if (csrf !== user.csrf)
       return next(errorCreator("Invalid CSRF-token", 401));
 
     await UserModel.deleteOne({ _id: decodeJWT.id });
+    const del = await ProductModel.deleteMany({ owner: decodeJWT.id });
 
     res
       .status(200)
@@ -537,7 +539,8 @@ export async function deleteUser(req, res, next) {
       })
       .json({
         code: 200,
-        message: `User <${decodeJWT.id}> successfully deleted`,
+        message1: `User <${decodeJWT.id}> successfully deleted`,
+        message2: `<${del.deletedCount}> products successfully deleted`,
       });
   } catch (err) {
     console.log("delete user --> controller error -->", err.message);

@@ -46,19 +46,3 @@ userRouter.put("/update/password", refreshCSRF, updatePass);
 
 userRouter.delete("/delete/favorites/:item", refreshCSRF, deleteFav);
 userRouter.delete("/delete/account", deleteUser);
-
-// test route for email templates
-userRouter.post(
-  "/test-email",
-  body("path").unescape(),
-  async (req, res, next) => {
-    try {
-      if (req.body.pin === process.env.EMAIL_PIN) {
-        await sendEmail("test", req.body.email, req.body.path);
-        res.status(200).json({ status: "Message sent" });
-      }
-    } catch (error) {
-      next(error);
-    }
-  }
-);
