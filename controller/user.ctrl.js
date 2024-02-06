@@ -198,10 +198,10 @@ export async function confirmNewEmail(req, res, next) {
 }
 
 export async function getAbout(req, res, next) {
-  const isLoggedIn = req.cookies.jwt ? true : false;
-  const decodeJWT = req.cookies.jwt ? verifyJwt(req.cookies.jwt) : null;
-
   try {
+    const isLoggedIn = req.cookies.jwt ? true : false;
+    const decodeJWT = req.cookies.jwt ? verifyJwt(req.cookies.jwt) : null;
+
     const doc = await UserModel.findById(req.params.id).select(
       /* get information about yourself or someone else? */
       isLoggedIn && decodeJWT.id === req.params.id

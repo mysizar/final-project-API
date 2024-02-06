@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { MessageModel } from "../models/message.model.js";
-import { UserModel } from "../models/user.model.js";
-import { sendEmail } from "../config/mail.connect.js";
-import { ProductModel } from "../models/product.model.js";
 
 export const messageRouter = Router();
 
 messageRouter.post("/create", async (req, res, next) => {
-  await MessageModel.create({ ...req.body, time: new Date() });
+  try {
+    await MessageModel.create({ ...req.body, time: new Date() });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
   /* if (req.body.to.length === 24) {
     const { title, _id } = await ProductModel.findById(req.body.product);
     const { email } = await UserModel.findById(req.body.to);

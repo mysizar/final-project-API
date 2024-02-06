@@ -21,10 +21,14 @@ export default async function socketListener(socket) {
   io.emit("users", users);
 
   // backup messages
-  const messages = await MessageModel.find({
-    $or: [{ to_uid: socket.userID }, { from: socket.userID }],
-  }).sort({ time: 1 });
-  socket.emit("backup messages", messages);
+  try {
+    const messages = await MessageModel.find({
+      $or: [{ to_uid: socket.userID }, { from: socket.userID }],
+    }).sort({ time: 1 });
+    socket.emit("backup messages", messages);
+  } catch (error) {
+    console.log(error);
+  }
 
   socket.on("session update", async (data) => {
     const oldUserID = socket.userID;
@@ -38,27 +42,31 @@ export default async function socketListener(socket) {
       username: data.username,
     });
     // update messages in Database
-    await MessageModel.updateMany(
-      { to_uid: oldUserID },
-      { to_uid: data.userID }
-    );
-    await MessageModel.updateMany({ from: oldUserID }, { from: data.userID });
-    // update session in Database
-    await SocketModel.findOneAndUpdate(
-      { sessionID: data.sessionID },
-      {
+    try {
+      await MessageModel.updateMany(
+        { to_uid: oldUserID },
+        { to_uid: data.userID }
+      );
+      await MessageModel.updateMany({ from: oldUserID }, { from: data.userID });
+      // update session in Database
+      await SocketModel.findOneAndUpdate(
+        { sessionID: data.sessionID },
+        {
+          sessionID: data.sessionID,
+          userID: data.userID,
+          username: data.username,
+        },
+        { upsert: true }
+      );
+      // send to frontend
+      socket.emit("session", {
         sessionID: data.sessionID,
         userID: data.userID,
         username: data.username,
-      },
-      { upsert: true }
-    );
-    // send to frontend
-    socket.emit("session", {
-      sessionID: data.sessionID,
-      userID: data.userID,
-      username: data.username,
-    });
+      });
+    } catch (error) {
+      console.log(error);
+    }
     // update users
     users = users.map((i) =>
       i.userID !== oldUserID
@@ -71,14 +79,22 @@ export default async function socketListener(socket) {
     );
     io.emit("users", users);
     // update messages
-    const messages = await MessageModel.find({
-      $or: [{ to_uid: socket.userID }, { from: socket.userID }],
-    }).sort({ time: 1 });
-    socket.emit("backup messages", messages);
+    try {
+      const messages = await MessageModel.find({
+        $or: [{ to_uid: socket.userID }, { from: socket.userID }],
+      }).sort({ time: 1 });
+      socket.emit("backup messages", messages);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   socket.on("new messages read", async (msgsToUpdate) => {
-    await MessageModel.updateMany(msgsToUpdate, { $unset: { notRead: 1 } });
+    try {
+      await MessageModel.updateMany(msgsToUpdate, { $unset: { notRead: 1 } });
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   socket.on("private message", async ({ product, from, to, to_uid, text }) => {
@@ -90,8 +106,12 @@ export default async function socketListener(socket) {
       time: new Date(),
       notRead: true,
     };
-    await MessageModel.create(data);
-    socket.to(to).emit("private message", data);
+    try {
+      await MessageModel.create(data);
+      socket.to(to).emit("private message", data);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   socket.on("disconnect", async () => {
@@ -103,14 +123,18 @@ export default async function socketListener(socket) {
       username: socket.username,
     });
     // backup
-    await SocketModel.findOneAndUpdate(
-      { sessionID: socket.sessionID },
-      {
-        sessionID: socket.sessionID,
-        userID: socket.userID,
-        username: socket.username,
-      },
-      { upsert: true }
-    );
+    try {
+      await SocketModel.findOneAndUpdate(
+        { sessionID: socket.sessionID },
+        {
+          sessionID: socket.sessionID,
+          userID: socket.userID,
+          username: socket.username,
+        },
+        { upsert: true }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   });
 }
