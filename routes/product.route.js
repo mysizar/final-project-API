@@ -21,10 +21,17 @@ productRouter.get("/title/:title/:limit?/:page?", checkFilter, getByName);
 productRouter.get("/owner/:id/:limit?/:page?", checkFilter, getByOwner);
 productRouter.get("/id/:id", getById);
 
-productRouter.post("/create", body("images").unescape(), refreshCSRF, create);
+productRouter.post(
+  "/create",
+  body("images").unescape(),
+  body("category").unescape(),
+  refreshCSRF,
+  create
+);
 productRouter.put(
   "/update/:id",
   body("images").unescape(),
+  body("category").unescape(),
   refreshCSRF,
   updateProduct
 );
