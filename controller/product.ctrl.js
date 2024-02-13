@@ -194,6 +194,39 @@ export async function updateProduct(req, res, next) {
   }
 }
 
+export async function updateBuyer(req, res, next) {
+  try {
+    const { buyer } = await ProductModel.findById(req.params.id);
+    if (buyer.includes(req.body.buyer))
+      return next(
+        errorCreator("You have already sent a purchase request!", 403)
+      );
+
+    const doc = await ProductModel.findByIdAndUpdate(
+      req.params.id,
+      { $push: { buyer: req.body.buyer } },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("buyer");
+    if (!doc) return next(errorCreator("Item not found", 400));
+
+    res.status(200).json({
+      code: 200,
+      message: "Item successfully updated",
+      doc,
+    });
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      next(errorCreator(err.message, 400));
+    } else {
+      console.log("update product --> controller error -->", err.message);
+      next(errorCreator("Database error", 500));
+    }
+  }
+}
+
 /*------------------- delete ------------------*/
 
 export async function deleteProduct(req, res, next) {

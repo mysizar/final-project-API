@@ -75,6 +75,7 @@ const UserSchema = new Schema(
         min: 1,
         max: 5,
       },
+      whoRated: [String],
       favorites: { type: [Schema.Types.ObjectId], ref: "product" },
     },
   },

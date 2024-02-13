@@ -305,6 +305,7 @@ export async function updateRating(req, res, next) {
   });
 
   const score = req.params.score;
+  const whoRated = req.body.whoRated;
 
   if (uid === req.params.id)
     return next(errorCreator("You cannot rate yourself!", 401));
@@ -312,9 +313,16 @@ export async function updateRating(req, res, next) {
     return next(errorCreator("<score> must be a number between 1 and 5!", 401));
 
   try {
+    const user = await UserModel.findOne({
+      _id: req.params.id,
+      "info.whoRated": whoRated,
+    }).select("info.whoRated");
+    if (user?.info.whoRated.includes(req.body.whoRated))
+      return next(errorCreator("You cannot rate a user twice", 403));
+
     const doc = await UserModel.findByIdAndUpdate(
       req.params.id,
-      { $push: { "info.rating": score } },
+      { $push: { "info.rating": score }, $push: { "info.whoRated": whoRated } },
       {
         new: true,
         runValidators: true,

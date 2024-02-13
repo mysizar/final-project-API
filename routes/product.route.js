@@ -8,6 +8,7 @@ import {
   create,
   deleteProduct,
   updateProduct,
+  updateBuyer,
 } from "../controller/product.ctrl.js";
 import checkFilter from "../middlewares/product/checkFilter.mdw.js";
 import refreshCSRF from "../middlewares/user/refreshCSRF.mdw.js";
@@ -35,4 +36,5 @@ productRouter.put(
   refreshCSRF,
   updateProduct
 );
+productRouter.put("/update/buyer/:id", updateBuyer);
 productRouter.delete("/delete/:id", refreshCSRF, deleteProduct);
