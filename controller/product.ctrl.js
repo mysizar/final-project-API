@@ -214,7 +214,10 @@ export async function deleteProduct(req, res, next) {
 
     const doc = await ProductModel.findByIdAndDelete(req.params.id);
 
-    res.status(204);
+    res.status(200).json({
+      code: 200,
+      message: "Item successfully deleted",
+    });
   } catch (err) {
     console.log("delete product --> controller error -->", err.message);
     next(errorCreator("Database error", 500));

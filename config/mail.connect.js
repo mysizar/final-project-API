@@ -56,11 +56,6 @@ export async function sendEmail(type, userEmail, token) {
       text = readFileSync("templates/newMessage/text.txt", "utf-8");
       break;
 
-    case "test":
-      subject = "Test email";
-      html = { path: token };
-      break;
-
     default:
       console.log("sendEmail error --> wrong 'type' of message");
       break;
