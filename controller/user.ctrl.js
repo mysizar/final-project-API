@@ -319,12 +319,11 @@ export async function updateRating(req, res, next) {
     }).select("info.whoRated");
     if (user?.info.whoRated.includes(req.body.whoRated))
       return next(errorCreator("You cannot rate a user twice", 403));
-    console.log(score);
+
     const doc = await UserModel.findByIdAndUpdate(
       req.params.id,
       {
         $push: { "info.rating": score, "info.whoRated": whoRated },
-        // $push: { "info.whoRated": whoRated },
       },
       {
         new: true,
