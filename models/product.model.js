@@ -83,4 +83,13 @@ const ProductSchema = new Schema(
   { timestamps: true }
 );
 
+ProductSchema.pre("save", function (next) {
+  if (this.images.length === 0)
+    this.images.push(
+      "https://res.cloudinary.com/djoadytrq/image/upload/v1707928236/kein-foto_bqipr1.jpg"
+    );
+
+  next();
+});
+
 export const ProductModel = model("product", ProductSchema);

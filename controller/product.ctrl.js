@@ -204,7 +204,7 @@ export async function updateBuyer(req, res, next) {
 
     const doc = await ProductModel.findByIdAndUpdate(
       req.params.id,
-      { $push: { buyer: req.body.buyer } },
+      { $push: { buyer: req.body.buyer }, status: "reserved" },
       {
         new: true,
         runValidators: true,

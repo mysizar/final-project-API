@@ -207,7 +207,7 @@ export async function getAbout(req, res, next) {
       /* get information about yourself or someone else? */
       isLoggedIn && decodeJWT.id === req.params.id
         ? "email info createdAt"
-        : "createdAt info.about.username info.rating"
+        : "createdAt info.about.username info.about.location.city info.about.location.zip info.rating"
     );
     if (!doc) return next(errorCreator("User not found", 400));
 
