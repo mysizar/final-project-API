@@ -124,7 +124,9 @@ export async function create(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -156,7 +158,9 @@ export async function updateProduct(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
@@ -234,7 +238,9 @@ export async function deleteProduct(req, res, next) {
   delete req.body.secure;
   res.cookie("csrf", csrf, {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: "None",
+    domain: process.env.DOMAIN,
     maxAge: 604800000, // 7 days
   });
 
