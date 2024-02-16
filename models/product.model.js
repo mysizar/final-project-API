@@ -85,9 +85,7 @@ const ProductSchema = new Schema(
 
 ProductSchema.pre("save", function (next) {
   if (this.images.length === 0)
-    this.images.push(
-      "https://res.cloudinary.com/djoadytrq/image/upload/v1707928236/kein-foto_bqipr1.jpg"
-    );
+    this.images.push("https://i.ibb.co/RQJ0Ypt/kein-foto.jpg");
 
   next();
 });
