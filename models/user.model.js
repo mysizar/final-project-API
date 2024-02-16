@@ -57,7 +57,7 @@ const UserSchema = new Schema(
           street: String,
           house: {
             type: String,
-            minLength: 1,
+            // minLength: 1,
           },
         },
         gender: {
