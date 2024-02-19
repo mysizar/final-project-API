@@ -64,6 +64,8 @@ export async function logout(req, res, next) {
   const csrf = req.cookies.csrf;
   const jwt = req.cookies.jwt;
 
+  if (!csrf || !jwt) return next(errorCreator("Cookies not valid", 401));
+
   try {
     const decodeJWT = verifyJwt(jwt);
     if (!decodeJWT) return next(errorCreator("Unauthorized", 401));
