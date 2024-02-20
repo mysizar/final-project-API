@@ -71,7 +71,7 @@ export async function logout(req, res, next) {
     if (!decodeJWT) return next(errorCreator("Unauthorized", 401));
 
     const user = await UserModel.findOne({ _id: decodeJWT.id });
-    if (csrf !== user.csrf) return next(errorCreator("Unauthorized", 401));
+    if (csrf !== user?.csrf) return next(errorCreator("Unauthorized", 401));
 
     await UserModel.findByIdAndUpdate(decodeJWT.id, {
       $unset: { jwt: 1, csrf: 1 },
